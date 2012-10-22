@@ -25,3 +25,11 @@ module.__proto__['require'] = function() {
     return proxy(orig.apply(this, arguments));
   }
 };
+
+function test(fn) {
+  fn();
+  // fn.toString().match(/function (.*)\(\)/);
+  // console.log(RegExp.$1);
+  return test;
+}
+module.exports = test;
