@@ -20,10 +20,11 @@ function proxy(assert, test_count) {
 
 var orig = module.__proto__['require'];
 module.__proto__['require'] = function() {
+  var result = orig.apply(this, arguments);
   if (arguments[0] === 'assert') {
-    return proxy(orig.apply(this, arguments), 0);
+    result = proxy(result, 0);
   }
-  return orig.apply(this, arguments);
+  return result;
 };
 
 function test(fn) {
