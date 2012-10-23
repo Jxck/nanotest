@@ -1,5 +1,7 @@
 function proxy(assert, test_count) {
   assert.count = function(n) {
+    var file = module.parent.filename.split('/').reverse()[0];
+    console.log(file, test_count);
     assert.equal(n, test_count);
   }
   var methods = Object.keys(assert);
