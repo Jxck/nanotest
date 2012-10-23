@@ -40,7 +40,7 @@ function test(fn) {
     function next() {
       if (!local.length) return;
       var t = local.shift();
-      if(t.length) return t(next);
+      if (t.length) return t(next);
       // if test dosen't get arguments
       // execute it syncronous
       t();
