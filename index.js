@@ -29,10 +29,23 @@ module.__proto__['require'] = function() {
   return result;
 };
 
-function test(fn) {
-  fn();
   //fn.toString().match(/function (.*)\(\)/);
   //console.log(RegExp.$1);
+var tests = [];
+function test(fn) {
+  if (!fn) {
+    var local = tests.slice();
+    tests = [];
+
+    function next() {
+      if (!local.length) return;
+      var t = local.shift();
+      t(next);
+    }
+    next();
+    return test;
+  }
+  tests.push(fn);
   return test;
 }
 module.exports = test;
