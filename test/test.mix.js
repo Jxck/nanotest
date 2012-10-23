@@ -7,11 +7,13 @@ test(function a(next) {
     assert.ok(true);
     next();
   }, 100);
+})(function b() {
+  assert.equal('1', 1);
 })(function b(next) {
   process.nextTick(function() {
     assert.equal('1', 1);
     next();
   });
 })(function() {
-  assert.count(3);
+  assert.count(4);
 })();

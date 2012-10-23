@@ -7,5 +7,6 @@ test(function c() {
 })(function d() {
   assert.equal('1', 1);
   assert.deepEqual(1, 1);
+})(function() {
   assert.count(4);
-});
+})();
