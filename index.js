@@ -1,6 +1,7 @@
 function proxy(assert, file, test_count) {
   assert.count = function(n) {
     assert.equal(n, test_count);
+    // show test file name & test count
     console.log(file, test_count);
   }
   var methods = Object.keys(assert);
@@ -24,6 +25,11 @@ module.constructor.prototype.require = function() {
   var result = require_orig.apply(this, arguments);
   if (arguments[0] === 'assert') {
     Object.keys(require.cache).forEach(function(k) {
+      // if nanotest requires multi time
+      // delete from cache for showing
+      // correct module.parent.
+      // because it's impossible to delete
+      // cache of assert.
       if (k.match(/nanotest\/index.js$/)) {
         return delete require.cache[k];
       }
