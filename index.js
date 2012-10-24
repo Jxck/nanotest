@@ -1,8 +1,38 @@
+function color(color, text) {
+  var ansi  = {
+    "off": 0,
+    "bold": 1,
+    "italic": 3,
+    "underline": 4,
+    "blink": 5,
+    "inverse": 7,
+    "hidden": 8,
+    "black": 30,
+    "red": 31,
+    "green": 32,
+    "yellow": 33,
+    "blue": 34,
+    "magenta": 35,
+    "cyan": 36,
+    "white": 37,
+    "black_bg": 40,
+    "red_bg": 41,
+    "green_bg": 42,
+    "yellow_bg": 43,
+    "blue_bg": 44,
+    "magenta_bg": 45,
+    "cyan_bg": 46,
+    "white_bg": 47
+  };
+  var head = "\033[" + ansi[color] + "m";
+  var tail = "\033[" + ansi['off'] + "m";
+  return head + text + tail;
+}
 function proxy(assert, file, test_count) {
   assert.count = function(n) {
     assert.equal(n, test_count);
     // show test file name & test count
-    console.log(file, test_count);
+    console.log(color('green', file), color('yellow', test_count));
   }
   var methods = Object.keys(assert);
   var orig = assert;
@@ -40,8 +70,6 @@ module.constructor.prototype.require = function() {
   return result;
 };
 
-// fn.toString().match(/function (.*)\(\)/);
-// console.log(RegExp.$1);
 var tests = [];
 function test(fn) {
   if (!fn) {
