@@ -1,3 +1,6 @@
+// colorise
+// add ansi escape sequence to text
+// TODO: separate file
 function color(color, text) {
   var ansi = {
     'off': 0,
@@ -29,28 +32,61 @@ function color(color, text) {
   return head + text + tail;
 }
 
+// proxy the assert methods
+// basically dosen't change
+// assert original behavior
+// but make them count number
+// of executed time.
+//
+// finally, you can check
+// expected assertion count with
+// assert.count(n)
+//
+// test(function() {
+//   assert(true);
+//   (function() {
+//     // you can find
+//     // miss like this.
+//     assert.equal(true);
+//   });
+//   // make sure two asserts
+//   // has passed
+//   assert.count(2);
+// })()
 function proxy(assert, file, test_count) {
+
+  // add count() to assert
+  // checking the number of exected assert
+  // and also shows the name of testfile
   assert.count = function(n) {
     assert.equal(n, test_count);
     // show test file name & test count
     console.log(color('green', file), color('yellow', test_count));
   }
+
   var methods = Object.keys(assert);
-  var orig = assert;
-  var proxyed = function() {
-    orig.apply(this, arguments);
+  var orig_assert = assert;
+
+  // proxy assert(true) with countup
+  var proxyed_assert = function() {
+    orig_assert.apply(this, arguments);
     test_count++;
   }
+
+  // proxy assert.hoge() with countup
   methods.forEach(function(method) {
     var orig_method = assert[method];
-    proxyed[method] = function() {
+    proxyed_assert[method] = function() {
       orig_method.apply(this, arguments);
       test_count++;
     }
   });
-  return proxyed;
+
+  return proxyed_assert;
 }
 
+// proxy the require()
+// for changing assert behavior
 var require_orig = module.constructor.prototype.require;
 module.constructor.prototype.require = function() {
   var result = require_orig.apply(this, arguments);
@@ -71,20 +107,67 @@ module.constructor.prototype.require = function() {
   return result;
 };
 
+/**
+ * this is the test() which makes test case.
+ * you can execute test() with
+ * giving testcase function one by one.
+ * if you got next in testcase
+ * you can use it for async test
+ *
+ * sync test
+ *
+ * test(function() {
+ *   assert(true);
+ * })(function() {
+ *   assert(true);
+ * })(function() {
+ *   assert(true);
+ *   assert.count(3);
+ * })();
+ *
+ * don't forget last execution!
+ *
+ * async test
+ *
+ * test(function(next) {
+ *   async_func(function() {
+ *     assert(true);
+ *     next();
+ *   });
+ * })(function() {
+ *   // you can mix sync & async
+ *   // without geting next is sync test
+ *   assert(true);
+ * })(function(next) {
+ *   async_func(function() {
+ *     assert(true);
+ *     next();
+ *   });
+ * })(function() {
+ *   assert.count(3);
+ * });
+ *
+ */
 var tests = [];
 function test(fn) {
   if (!fn) {
+    // copy tests array
+    // and make tests empty
+    // for another test file
     var local = tests.slice();
     tests = [];
 
     function next() {
       if (!local.length) return;
       var t = local.shift();
+
+      // if test gets next
+      // execute it syncronous
       if (t.length) return t(next);
+
       // if test dosen't get arguments
       // execute it syncronous
-      t();
-      next();
+      t(); next();
     }
     next();
     return test;
