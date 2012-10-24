@@ -1,9 +1,7 @@
-function proxy(assert, test_count) {
+function proxy(assert, file, test_count) {
   assert.count = function(n) {
-    // console.log(arguments.callee.caller.toString());
-    // var file = module.parent.filename.split('/').reverse()[0];
-    // console.log(file);
     assert.equal(n, test_count);
+    console.log(file, test_count);
   }
   var methods = Object.keys(assert);
   var orig = assert;
@@ -25,7 +23,13 @@ var require_orig = module.constructor.prototype.require;
 module.constructor.prototype.require = function() {
   var result = require_orig.apply(this, arguments);
   if (arguments[0] === 'assert') {
-    result = proxy(result, 0);
+    Object.keys(require.cache).forEach(function(k) {
+      if (k.match(/nanotest\/index.js$/)) {
+        return delete require.cache[k];
+      }
+    });
+    var file = module.parent.filename.split('/').reverse()[0];
+    result = proxy(result, file, 0);
   }
   return result;
 };
