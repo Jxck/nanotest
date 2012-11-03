@@ -1,6 +1,6 @@
 {
   "name": "nanotest",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "testing module for play project",
   "main": "index.js",
   "directories": {
