@@ -1,0 +1,17 @@
+{
+  "name": "nanotest",
+  "version": "0.0.1",
+  "description": "testing module for play project",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test"
+  },
+  "keywords": [
+    "test"
+  ],
+  "author": "Jxck",
+  "license": "MIT"
+}
