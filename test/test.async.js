@@ -1,19 +1,52 @@
 var test = require('../');
 var assert = require('assert');
 
-test(function a(next) {
+test(function(done) {
+
+  // test settimeout
   setTimeout(function() {
     assert(true);
-    assert.ok(true);
-    next();
+    done();
   }, 100);
-})(function() {
-  assert.deepEqual(1, 1);
-})(function b(next) {
-  process.nextTick(function() {
-    assert.equal('1', 1);
-    next();
+
+})(function(done) {
+
+  // shorter than previous
+  setTimeout(function() {
+    assert(true);
+    done();
+  }, 10);
+
+})(function(done) {
+
+  // interval
+  var c = 0;
+  var id = setInterval(function() {
+    assert(true);
+    if (c++ > 3) {
+      clearInterval(id);
+      done();
+    }
+  }, 10);
+
+})(function(done) {
+
+  // immediate
+  setImmediate(function() {
+    assert(true);
+    done();
   });
+
+})(function(done) {
+
+  // nextTick
+  process.nextTick(function() {
+    assert(true);
+    done();
+  });
+
 })(function() {
-  assert.count(4);
+
+  // count up
+  assert.count(9);
 })();

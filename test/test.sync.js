@@ -1,12 +1,23 @@
 var test = require('../');
 var assert = require('assert');
 
-test(function c() {
+// group
+test(function() {
+
   assert(true);
   assert.ok(true);
-})(function d() {
-  assert.equal('1', 1);
   assert.deepEqual(1, 1);
+
 })(function() {
-  assert.count(4);
+
+  var c = 0;
+  assert.equal(c++, 0);
+  assert.equal(c++, 1);
+  assert.equal(c++, 2);
+  assert.equal(c++, 3);
+
+})(function() {
+
+  assert.count(7);
+
 })();
